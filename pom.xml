@@ -16,12 +16,14 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
         Sample code based on InfoQ article "Data Oriented Programming in Java" by Brian Goetz.
-        
+
         https://www.infoq.com/articles/data-oriented-programming-java/
     </description>
 
     <properties>
         <kiwi-bom.version>2.0.9</kiwi-bom.version>
+
+        <maven-compiler-plugin.java.release>21</maven-compiler-plugin.java.release>
     </properties>
 
     <dependencyManagement>
