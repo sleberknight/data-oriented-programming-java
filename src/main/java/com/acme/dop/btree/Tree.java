@@ -1,12 +1,21 @@
 package com.acme.dop.btree;
 
+import static java.util.Objects.isNull;
+
 import java.util.function.Consumer;
 
 public sealed interface Tree<T> {
 
     record Nil<T>() implements Tree<T> { }
 
-    record Node<T>(Tree<T> left, T val, Tree<T> right) implements Tree<T> { }
+    record Node<T>(Tree<T> left, T val, Tree<T> right) implements Tree<T> {
+
+        public Node {
+            if (isNull(left) || isNull(right)) {
+                throw new IllegalArgumentException("left and right must not be null");
+            }
+        }
+    }
 
     static <T> Nil<T> nil() {
         return new Nil<>();
