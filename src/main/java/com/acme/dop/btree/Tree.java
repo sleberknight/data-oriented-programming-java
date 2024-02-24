@@ -54,6 +54,6 @@ public sealed interface Tree<T> {
                 c.accept(val);
                 inorder(right, c);
                 break;
-        };
+        }
     }
 }

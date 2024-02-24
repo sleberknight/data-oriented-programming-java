@@ -11,7 +11,7 @@ class OptTest {
         var str = "forty-two";
         Opt<String> optString = Opt.of(str);
 
-        Opt<Integer> optInt = optString.map(s -> s.length());
+        Opt<Integer> optInt = optString.map(String::length);
         Integer result = switch (optInt) {
             case Opt.Some<Integer>(Integer i) -> i;
             case Opt.None<Integer>() -> 42;
@@ -24,7 +24,7 @@ class OptTest {
     void shouldMapNone() {
         Opt<String> optString = Opt.empty();
 
-        Opt<Integer> optInt = optString.map(s -> s.length());
+        Opt<Integer> optInt = optString.map(String::length);
         Integer result = switch (optInt) {
             case Opt.Some<Integer>(Integer i) ->i;
             case Opt.None<Integer>() -> 42;

@@ -34,7 +34,7 @@ class TreeTest {
         var A = Tree.full(B, 42, C);
 
         var output = new StringBuilder();
-        A.inorder(value -> output.append(value + " "));
+        A.inorder(value -> output.append(value).append(" "));
 
         assertThat(output).contains("12 20 8 42 22 22 ");
     }
