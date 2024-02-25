@@ -6,11 +6,13 @@ import static com.acme.dop.math.Node.exp;
 import static com.acme.dop.math.Node.neg;
 import static com.acme.dop.math.Node.val;
 import static com.acme.dop.math.Node.variable;
+import static com.acme.dop.math.NodeMath.diff;
 import static com.acme.dop.math.NodeMath.eval;
 import static com.acme.dop.math.NodeMath.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -162,5 +164,72 @@ class NodeMathTest {
 
         var result = format(addNode);
         assertThat(result).isEqualTo("((a * b) + (-3.0 * 6.0))");
+    }
+
+    @Nested
+    class SingleVariableDifferentiation {
+
+        @Test
+        void withConstant() {
+            Node result = diff(val(42.0), "x");
+            assertThat(format(result)).isEqualTo("0.0");
+        }
+
+        @Test
+        void withConstantAndVar() {
+            Node result = diff(mul(val(5.0), variable("y")), "y");
+            assertThat(format(result)).isEqualTo("(5.0 * 1.0)");
+        }
+
+        @Test
+        void withConstantAndVarToSecondPower() {
+            Node result = diff(mul(val(3.0), exp(variable("z"), 2)), "z");
+            assertThat(format(result)).isEqualTo("(3.0 * (2.0 * (z^1 * 1.0)))");
+        }
+
+        @Test
+        void withConstantAndVarToThirdPower() {
+            Node result = diff(mul(val(2.0), exp(variable("z"), 3)), "z");
+            assertThat(format(result)).isEqualTo("(2.0 * (3.0 * (z^2 * 1.0)))");
+        }
+
+        @Test
+        void withTwoTerms() {
+            // 4x^2
+            var a = mul(val(4.0), exp(variable("x"), 2));
+
+            // x
+            var b = variable("x");
+
+            // 4x^2 + x
+            var expr = add(a, b);
+
+            Node result = diff(expr, "x");
+            assertThat(format(result)).isEqualTo("((4.0 * (2.0 * (x^1 * 1.0))) + 1.0)");
+        }
+
+        @Test
+        void withFourTerms() {
+            // 3x^3
+            var a = mul(val(3.0), exp(variable("x"), 3));
+
+            // 4x^2
+            var b = mul(val(4.0), exp(variable("x"), 2));
+
+            // 5x
+            var c = mul(val(5.0), variable("x"));
+
+            // 10
+            var d = val(10.0);
+
+            // 3x^3 + 4x^2 + 5x + 10
+            var expr = add(add(a, b), add(c, d));
+
+            Node result = diff(expr, "x");
+            assertThat(format(result)).isEqualTo(
+                    "(((3.0 * (3.0 * (x^2 * 1.0))) + (4.0 * (2.0 * (x^1 * 1.0)))) + ((5.0 * 1.0) + 0.0))");
+
+            // NOTE: The simplified result is: 9x^2 + 8x + 5 (but the symbolic diff function doesn't simplify)
+        }
     }
 }
