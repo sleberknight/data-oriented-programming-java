@@ -215,9 +215,9 @@ class NodeMathTest {
             var expr = mul(term1, term2);
 
             Node result = diff(expr, "t");
-            assertThat(format(result)).isEqualTo("((8.0 * 1.0) * (5.0 * (2.0 * (t^1 * 1.0))))");
+            assertThat(format(result)).isEqualTo("(((8.0 * t) * (5.0 * (2.0 * (t^1 * 1.0)))) + ((8.0 * 1.0) * (5.0 * t^2)))");
 
-            // NOTE: The simplified result is: 80t
+            // NOTE: The simplified result is: 120t^2
         }
 
         @Test

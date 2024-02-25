@@ -2,6 +2,7 @@ package com.acme.dop.math;
 
 import static com.acme.dop.math.BinaryNode.AddNode;
 import static com.acme.dop.math.BinaryNode.MulNode;
+import static com.acme.dop.math.BinaryNode.add;
 import static com.acme.dop.math.BinaryNode.mul;
 import static com.acme.dop.math.Node.ConstNode;
 import static com.acme.dop.math.Node.ExpNode;
@@ -57,9 +58,11 @@ public class NodeMath {
      */
     public static Node diff(Node n, String varName) {
         return switch (n) {
-            case AddNode(var left, var right) -> new AddNode(diff(left, varName), diff(right, varName));
+
+            case AddNode(var left, var right) -> add(diff(left, varName), diff(right, varName));
 
             // From the article, the following two MulNode cases handle the special cases of k*node and node*k
+            // where k is a constant.
 
             // NOTE: the sample article code shows using an identifier 'k' after ConstNode(double val) but
             // this does not currently compile. When you try "ConstNode(double val) k", the compiler gives
@@ -67,10 +70,13 @@ public class NodeMath {
             // In the editor, IntelliJ says "Identifier is now allowed here". Because of this, the return value
             // creates a new ConstNode(val) instead of using the (disallowed) "k" directly in the MulNode.
             case MulNode(var left, ConstNode(double val)) -> mul(val(val), diff(left, varName));
-
             case MulNode(ConstNode(double val), var right) -> mul(val(val), diff(right, varName));
 
-            case MulNode(var left, var right) -> mul(diff(left, varName), diff(right, varName));
+            // This handles generic multiplication using the product rule
+            case MulNode(var left, var right) -> add(
+                    mul(left, diff(right, varName)),
+                    mul(diff(left, varName), right)
+            );
 
             case ExpNode(var node, int exp) -> mul(val(exp), mul(exp(node, exp - 1), diff(node, varName)));
 
