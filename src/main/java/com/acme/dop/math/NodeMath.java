@@ -70,6 +70,8 @@ public class NodeMath {
 
             case MulNode(ConstNode(double val), var right) -> mul(val(val), diff(right, varName));
 
+            case MulNode(var left, var right) -> mul(diff(left, varName), diff(right, varName));
+
             case ExpNode(var node, int exp) -> mul(val(exp), mul(exp(node, exp - 1), diff(node, varName)));
 
             case NegNode(var node) -> neg(diff(node, varName));
@@ -77,8 +79,6 @@ public class NodeMath {
             case ConstNode(double ignored) -> val(0);
 
             case VarNode(String name) -> name.equals(varName) ? val(1) : val(0);
-
-            default -> null;
         };
     }
 }

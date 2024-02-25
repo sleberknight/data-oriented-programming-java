@@ -179,18 +179,45 @@ class NodeMathTest {
         void withConstantAndVar() {
             Node result = diff(mul(val(5.0), variable("y")), "y");
             assertThat(format(result)).isEqualTo("(5.0 * 1.0)");
+
+            // NOTE: The simplified result is: 5
+        }
+
+        @Test
+        void withNegativeConstantAndVar() {
+            Node result = diff(neg(mul(val(8.0), variable("t"))), "t");
+            assertThat(format(result)).isEqualTo("-(8.0 * 1.0)");
+
+            // NOTE: The simplified result is: -8
         }
 
         @Test
         void withConstantAndVarToSecondPower() {
             Node result = diff(mul(val(3.0), exp(variable("z"), 2)), "z");
             assertThat(format(result)).isEqualTo("(3.0 * (2.0 * (z^1 * 1.0)))");
+
+            // NOTE: The simplified result is: 6z
         }
 
         @Test
         void withConstantAndVarToThirdPower() {
             Node result = diff(mul(val(2.0), exp(variable("z"), 3)), "z");
             assertThat(format(result)).isEqualTo("(2.0 * (3.0 * (z^2 * 1.0)))");
+
+            // NOTE: The simplified result is: 6z^2
+        }
+
+        @Test
+        void withTwoMultipliedTerms() {
+            // 8t * 5t^2
+            var term1 = mul(val(8.0), variable("t"));
+            var term2 = mul(val(5.0), exp(variable("t"), 2));
+            var expr = mul(term1, term2);
+
+            Node result = diff(expr, "t");
+            assertThat(format(result)).isEqualTo("((8.0 * 1.0) * (5.0 * (2.0 * (t^1 * 1.0))))");
+
+            // NOTE: The simplified result is: 80t
         }
 
         @Test
@@ -206,6 +233,8 @@ class NodeMathTest {
 
             Node result = diff(expr, "x");
             assertThat(format(result)).isEqualTo("((4.0 * (2.0 * (x^1 * 1.0))) + 1.0)");
+
+            // NOTE: The simplified result is: 8x + 1
         }
 
         @Test
