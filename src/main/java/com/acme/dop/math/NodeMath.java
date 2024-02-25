@@ -1,15 +1,21 @@
 package com.acme.dop.math;
 
-import static com.acme.dop.math.BinaryNode.*;
+import static com.acme.dop.math.BinaryNode.AddNode;
+import static com.acme.dop.math.BinaryNode.MulNode;
 import static com.acme.dop.math.Node.ConstNode;
 import static com.acme.dop.math.Node.ExpNode;
 import static com.acme.dop.math.Node.NegNode;
 import static com.acme.dop.math.Node.VarNode;
+import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
 
 public class NodeMath {
     private NodeMath() {
+    }
+
+    static double eval(Node n) {
+        return eval(n, null);
     }
 
     static double eval(Node n, Function<String, Double> vars) {
@@ -19,8 +25,12 @@ public class NodeMath {
             case ExpNode(var node, int exp) -> Math.pow(eval(node, vars), exp);
             case NegNode(var node) -> -eval(node, vars);
             case ConstNode(double val) -> val;
-            case VarNode(String name) -> vars.apply(name);
+            case VarNode(String name) -> apply(vars, name);
         };
+    }
+
+    private static double apply(Function<String, Double> vars, String name) {
+        return requireNonNull(vars, "vars must not be null when VarNodes exist").apply(name);
     }
 
     static String format(Node n) {

@@ -18,4 +18,20 @@ public sealed interface Node permits BinaryNode, ConstNode, ExpNode, NegNode, Va
 
     record VarNode(String name) implements Node {
     }
+
+    static ExpNode exp(Node left, int exp) {
+        return new ExpNode(left, exp);
+    }
+
+    static NegNode neg(Node node) {
+        return new NegNode(node);
+    }
+
+    static ConstNode val(double val) {
+        return new ConstNode(val);
+    }
+
+    static VarNode variable(String name) {
+        return new VarNode(name);
+    }
 }
