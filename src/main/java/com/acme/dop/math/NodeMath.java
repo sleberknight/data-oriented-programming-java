@@ -14,11 +14,11 @@ public class NodeMath {
     private NodeMath() {
     }
 
-    static double eval(Node n) {
+    public static double eval(Node n) {
         return eval(n, null);
     }
 
-    static double eval(Node n, Function<String, Double> vars) {
+    public static double eval(Node n, Function<String, Double> vars) {
         return switch (n) {
             case AddNode(var left, var right) -> eval(left, vars) + eval(right, vars);
             case MulNode(var left, var right) -> eval(left, vars) * eval(right, vars);
@@ -33,7 +33,7 @@ public class NodeMath {
         return requireNonNull(vars, "vars must not be null when VarNodes exist").apply(name);
     }
 
-    static String format(Node n) {
+    public static String format(Node n) {
         return switch (n) {
             case AddNode(var left, var right) -> String.format("(%s + %s)", format(left), format(right));
             case MulNode(var left, var right) -> String.format("(%s * %s)", format(left), format(right));
